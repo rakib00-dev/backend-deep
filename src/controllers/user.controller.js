@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  // get req data
+  // get req data ✅
   // validation - not empty
   // check if user already exist: username, emai,
   // check image check for avatar
@@ -10,6 +10,9 @@ const registerUser = asyncHandler(async (req, res) => {
   // remove password and refresh token field from response
   // check for user creation
   // return res
+
+  const { fullName, email, password, username } = req.body;
+  console.log("email:", email);
 });
 
 export { registerUser };
