@@ -10,10 +10,10 @@ const registerUser = asyncHandler(async (req, res) => {
   // check if user already exist: username, email, ✅
   // check image check for avatar ✅
   // upload them to cloudinary ✅
-  // create user object - create entry in db
-  // remove password and refresh token field from response
-  // check for user creation
-  // return res
+  // create user object - create entry in db ✅
+  // remove password and refresh token field from response ✅
+  // check for user creation ✅
+  // return res ✅
 
   const { fullName, email, password, username } = req.body;
 
