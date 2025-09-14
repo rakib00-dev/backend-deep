@@ -3,8 +3,8 @@ import fs from "fs";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
+  api_secret: process.env.CLOUD_API_SECRET,
   api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECERET,
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
@@ -19,6 +19,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     return response;
   } catch (error) {
     fs.unlinkSync(localFilePath); // removed the temporary localFilePath file as the operation got failed
+    console.log(error);
     return null;
   }
 };
