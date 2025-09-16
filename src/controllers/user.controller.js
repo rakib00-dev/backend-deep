@@ -2,7 +2,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  destroyOnCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshToken = async (userId) => {
@@ -299,6 +302,10 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     { new: true }
   ).select("-password");
 
+  const oldImage = user?.coverImage;
+
+  await destroyOnCloudinary(oldImage);
+
   res
     .status(200)
     .json(new ApiResponse(200, user, "Avatar changed successfully"));
@@ -326,6 +333,10 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     },
     { new: true }
   ).select("-password");
+
+  const oldImage = user?.coverImage;
+
+  await destroyOnCloudinary(oldImage);
 
   res
     .status(200)

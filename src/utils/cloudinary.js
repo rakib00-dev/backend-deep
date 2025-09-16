@@ -26,4 +26,14 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
-export { uploadOnCloudinary };
+const destroyOnCloudinary = async (localFilePath) => {
+  try {
+    await cloudinary.uploader.destroy(publicId, { resource_type: "video" });
+    return "Successfully Deleted old image";
+  } catch (error) {
+    console.log(error?.message);
+    return null;
+  }
+};
+
+export { uploadOnCloudinary, destroyOnCloudinary };
