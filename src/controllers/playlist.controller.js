@@ -13,7 +13,15 @@ const createPlaylist = asyncHandler(async (req, res) => {
     throw new ApiError(400, "name and description of the playlist must exist");
   }
 
-  const playlist = await Playlist.create({ name, description });
+  if (!req.user._id) {
+    throw new ApiError(401, "unauthorized, User must login");
+  }
+
+  const playlist = await Playlist.create({
+    name,
+    description,
+    owner: req.user._id,
+  });
 
   res
     .status(200)
