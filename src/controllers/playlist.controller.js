@@ -70,7 +70,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
   const { playlistId, videoId } = req.params;
 
-  if (!(playlistId && videoId)) {
+  if (!playlistId && !videoId) {
     throw new ApiError(400, "PlaylistId and VideoId must exist to add video");
   }
 
@@ -100,7 +100,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
   // TODO: remove video from playlist
 
-  if (!(playlistId && videoId)) {
+  if (!playlistId && !videoId) {
     throw new ApiError(
       400,
       "Must Have PlaylistId and videoId to remove video from playlist"
@@ -157,7 +157,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Id Must Exist to update the playlist");
   }
 
-  if (!(name && description)) {
+  if (!name && !description) {
     throw new ApiError(
       400,
       "name and descriptioin Exist to update the playlist"
