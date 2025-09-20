@@ -62,7 +62,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 });
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
-  //TODO: add video to playlist by id
+  //TODO✅: add video to playlist by id
 
   const { playlistId, videoId } = req.params;
 
@@ -73,12 +73,16 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
   const addedVideoOnPlayList = await Playlist.findByIdAndUpdate(
     playlistId,
     {
-      $set: {
-        videos: [videoId],
+      $push: {
+        videos: videoId,
       },
     },
     { new: true }
   );
+
+  if (!addedVideoOnPlayList) {
+    throw new ApiError(404, "Playlist not found or video couldn't be added");
+  }
 
   return res
     .status(200)
