@@ -32,7 +32,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   //TODO✅: get user playlists
 
-  if (!userId || userId == "") {
+  if (!userId) {
     throw new ApiError(400, "Must have userID to get user playlist");
   }
 
@@ -98,7 +98,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
   const { playlistId, videoId } = req.params;
 
-  // TODO: remove video from playlist
+  // TODO✅: remove video from playlist
 
   if (!playlistId && !videoId) {
     throw new ApiError(
@@ -110,12 +110,14 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
   const removedVideoFromPlaylist = await Playlist.findByIdAndUpdate(
     playlistId,
     {
-      $unset: {
-        videos: videoId,
-      },
+      $pull: { videos: videoId },
     },
     { new: true }
   );
+
+  if (!removedVideoFromPlaylist) {
+    throw new ApiError(404, "removedvideo is not found or coun't be added");
+  }
 
   return res
     .status(200)
