@@ -10,7 +10,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
   //TODO✅: create playlist
 
   if (!(name || description)) {
-    throw new ApiError(400, "name and description of the playlist must exist");
+    throw new ApiError(400, "Name and description of the playlist must exist");
   }
 
   if (!req.user._id) {
@@ -23,22 +23,22 @@ const createPlaylist = asyncHandler(async (req, res) => {
     owner: req.user._id,
   });
 
-  res
-    .status(200)
-    .json(new ApiResponse(200, playlist, "Playlist Created Successfully"));
+  return res
+    .status(201)
+    .json(new ApiResponse(201, playlist, "Playlist Created Successfully"));
 });
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   //TODO✅: get user playlists
 
-  if (!userId) {
+  if (!userId || userId == "") {
     throw new ApiError(400, "Must have userID to get user playlist");
   }
 
   const UserPlaylist = await Playlist.find({ owner: userId });
 
-  res
+  return res
     .status(200)
     .json(
       new ApiResponse(200, UserPlaylist, "Fetched User Playlist Successfully")
@@ -48,7 +48,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 const getPlaylistById = asyncHandler(async (req, res) => {
   const { playlistId } = req.params;
 
-  //TODO: get playlist by id
+  //TODO✅: get playlist by id
 
   if (!playlistId) {
     throw new ApiError(400, "Must Enter Playlist id to find playlist");
@@ -56,7 +56,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
   const playlist = await Playlist.findById(playlistId);
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, playlist, "Playlist fetched successfully"));
 });
@@ -78,7 +78,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  res
+  return res
     .status(200)
     .json(
       new ApiResponse(
@@ -111,7 +111,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  res
+  return res
     .status(200)
     .json(
       new ApiResponse(
@@ -136,7 +136,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 
   await Playlist.findByIdAndDelete(playlistId);
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, {}, "Deleted the Playlist Successfully"));
 });
@@ -164,7 +164,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  res
+  return res
     .status(200)
     .json(
       new ApiResponse(200, updatePlaylist, "Updated Playlist Successfully")
