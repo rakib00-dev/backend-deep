@@ -9,7 +9,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
   //TODO✅: create playlist
 
-  if (!(name || description)) {
+  if (!name || !description) {
     throw new ApiError(400, "Name and description of the playlist must exist");
   }
 
@@ -110,7 +110,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
   const removedVideoFromPlaylist = await Playlist.findByIdAndUpdate(
     playlistId,
     {
-      $pull: {
+      $unset: {
         videos: videoId,
       },
     },
