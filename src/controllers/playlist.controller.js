@@ -62,13 +62,15 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 });
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
+  //TODO: add video to playlist by id
+
   const { playlistId, videoId } = req.params;
 
   if (!playlistId && !videoId) {
     throw new ApiError(400, "PlaylistId and VideoId must exist to add video");
   }
 
-  const addedVideo = await Playlist.findByIdAndUpdate(
+  const addedVideoOnPlayList = await Playlist.findByIdAndUpdate(
     playlistId,
     {
       $set: {
@@ -83,7 +85,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        addVideoToPlaylist,
+        addedVideoOnPlayList,
         "Added video to playlist successfully"
       )
     );
