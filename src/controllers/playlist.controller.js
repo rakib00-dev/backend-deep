@@ -30,19 +30,13 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  //TODO: get user playlists
+  //TODO✅: get user playlists
 
   if (!userId) {
     throw new ApiError(400, "Must have userID to get user playlist");
   }
 
-  const UserPlaylist = await Playlist.aggregate([
-    {
-      $match: {
-        owner: userId,
-      },
-    },
-  ]);
+  const UserPlaylist = await Playlist.find({ owner: userId });
 
   res
     .status(200)
