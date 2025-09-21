@@ -153,7 +153,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   const { playlistId } = req.params;
   const { name, description } = req.body;
 
-  //TODO: update playlist
+  //TODO✅: update playlist
 
   if (!playlistId) {
     throw new ApiError(400, "Id Must Exist to update the playlist");
@@ -166,7 +166,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     );
   }
 
-  const UpdatedPlayList = await Playlist.findByIdAndUpdate(
+  const updatedPlayList = await Playlist.findByIdAndUpdate(
     playlistId,
     { $set: { name, description } },
     { new: true }
@@ -175,7 +175,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, updatePlaylist, "Updated Playlist Successfully")
+      new ApiResponse(200, updatedPlayList, "Updated Playlist Successfully")
     );
 });
 
