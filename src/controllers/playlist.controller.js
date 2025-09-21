@@ -133,7 +133,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 const deletePlaylist = asyncHandler(async (req, res) => {
   const { playlistId } = req.params;
 
-  // TODO: delete playlist
+  // TODO✅: delete playlist
 
   if (!playlistId) {
     throw new ApiError(
