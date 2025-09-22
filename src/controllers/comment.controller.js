@@ -1,36 +1,35 @@
-import mongoose from "mongoose";
 import { Comment } from "../models/comment.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const getVideoComments = asyncHandler(async (req, res) => {
-  //TODO: get all comments for a video
+  //TODO✅: get all comments for a video
   const { videoId } = req.params;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 2 } = req.query;
 
-  if (!videoId) {
-    throw new ApiError(400, "video ID must exist");
+  const pageNumber = parseInt(page, 10);
+  const limitNumber = parseInt(limit, 10);
+
+  // Find comments for the specific video
+  const comments = await Comment.find({ video: videoId })
+    .skip((pageNumber - 1) * limitNumber)
+    .limit(limitNumber)
+    .sort({ createdAt: -1 });
+
+  if (!comments) {
+    throw new ApiError(404, "comments collections could not get");
   }
-
-  const aggregate = Comment.aggregate([{ $match: { video: videoId } }]);
-
-  const options = {
-    page: parseInt(page, 10),
-    limit: parseInt(limit, 10),
-  };
-
-  const comments = await Comment.aggregatePaginate(aggregate, options);
 
   res
     .status(200)
     .json(
-      new ApiResponse(200, comments, "Successfully fetched video comments")
+      new ApiResponse(200, comments, "Video comments fetched successfully")
     );
 });
 
 const addComment = asyncHandler(async (req, res) => {
-  // TODO: add a comment to a video
+  // TODO✅: add a comment to a video
 
   const { videoId } = req.params;
   const { _id } = req.user;
@@ -62,7 +61,7 @@ const addComment = asyncHandler(async (req, res) => {
 });
 
 const updateComment = asyncHandler(async (req, res) => {
-  // TODO: update a comment
+  // TODO✅: update a comment
 
   const { commentId } = req.params;
   const { comment } = req.body;
@@ -91,7 +90,7 @@ const updateComment = asyncHandler(async (req, res) => {
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
-  // TODO: delete a comment
+  // TODO✅: delete a comment
 
   const { commentId } = req.params;
 
@@ -99,9 +98,15 @@ const deleteComment = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Id must exist to delete comment");
   }
 
-  await Comment.findByIdAndDelete(commentId);
+  const comment = await Comment.findByIdAndDelete(commentId);
 
-  res.status(200).json(new ApiResponse(200, {}, ""));
+  if (!comment) {
+    throw new ApiError(404, "comment must exist to remove");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Deleted Comment successfully"));
 });
 
 export { getVideoComments, addComment, updateComment, deleteComment };
