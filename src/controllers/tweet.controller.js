@@ -1,12 +1,11 @@
-import mongoose, { isValidObjectId } from "mongoose";
+import { isValidObjectId } from "mongoose";
 import { Tweet } from "../models/tweet.model.js";
-import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const createTweet = asyncHandler(async (req, res) => {
-  //TODO: create tweet
+  //TODO✅: create tweet
 
   const { content } = req.body;
   const { _id: userID } = req.user;
@@ -14,7 +13,7 @@ const createTweet = asyncHandler(async (req, res) => {
   const isUserIdValid = isValidObjectId(userID);
 
   if (!content) {
-    throw new ApiError(400, "content must exist to ");
+    throw new ApiError(400, "content must exist to create tweet");
   }
 
   if (!userID) {
@@ -33,7 +32,7 @@ const createTweet = asyncHandler(async (req, res) => {
 });
 
 const getUserTweets = asyncHandler(async (req, res) => {
-  // TODO: get user tweets
+  // TODO✅: get user tweets
 
   const { userId } = req.params;
 
@@ -58,7 +57,7 @@ const updateTweet = asyncHandler(async (req, res) => {
   const { tweetId } = req.params;
   const { content } = req.body;
 
-  if (!tweetId) {
+  if (!tweetId || !isValidObjectId(tweetId)) {
     throw new ApiError(404, "Failded to get tweet id");
   }
 
