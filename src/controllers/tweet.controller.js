@@ -52,7 +52,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
 });
 
 const updateTweet = asyncHandler(async (req, res) => {
-  //TODO: update tweet
+  //TODO✅: update tweet
 
   const { tweetId } = req.params;
   const { content } = req.body;
@@ -81,7 +81,7 @@ const updateTweet = asyncHandler(async (req, res) => {
 });
 
 const deleteTweet = asyncHandler(async (req, res) => {
-  //TODO: delete tweet
+  //TODO✅: delete tweet
   const { tweetId } = req.params;
 
   const isTweetIdValid = isValidObjectId(tweetId);
