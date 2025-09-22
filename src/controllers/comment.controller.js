@@ -11,7 +11,6 @@ const getVideoComments = asyncHandler(async (req, res) => {
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
 
-  // Find comments for the specific video
   const comments = await Comment.find({ video: videoId })
     .skip((pageNumber - 1) * limitNumber)
     .limit(limitNumber)
