@@ -124,7 +124,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
     throw new ApiError(200, "User could not find, user must login");
   }
 
-  const existingTweet = await Like.find({
+  const existingTweet = await Like.findOne({
     tweet: tweetId,
     likedBy: userId,
   });
