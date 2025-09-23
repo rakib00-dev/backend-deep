@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
-  //TODO: toggle like on video
+  //TODO✅: toggle like on video
 
   const { videoId } = req.params;
   const { _id: userId } = req.user;
@@ -56,18 +56,18 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 const toggleCommentLike = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
 
-  //TODO: toggle like on comment
+  //TODO✅: toggle like on comment
 
   const { _id: userId } = req.user;
 
-  if (!commentId || isValidObjectId(commentId)) {
+  if (!commentId || !isValidObjectId(commentId)) {
     throw new ApiError(
       400,
       "comment id is not valid or comment does not exist"
     );
   }
 
-  if (!userId || isValidObjectId(userId)) {
+  if (!userId || !isValidObjectId(userId)) {
     throw new ApiError(404, "User could not found or user must login");
   }
 
@@ -76,17 +76,17 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     likedBy: userId,
   });
 
-  const totalComments = await Like.countDocuments({ comment: commentId });
-
   if (existingComment) {
     await existingComment.deleteOne();
+
+    const totalCommentLikes = await Like.countDocuments({ comment: commentId });
 
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { totalComments },
+          { totalCommentLikes },
           "Like removed to comment successfully"
         )
       );
@@ -96,9 +96,17 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
       likedBy: userId,
     });
 
+    const totalCommentLikes = await Like.countDocuments({ comment: commentId });
+
     return res
       .status(201)
-      .json(new ApiResponse(201, "Like added to comment successfully"));
+      .json(
+        new ApiResponse(
+          201,
+          { totalCommentLikes },
+          "Like added to comment successfully"
+        )
+      );
   }
 });
 
@@ -109,10 +117,10 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
   const { _id: userId } = req.user;
 
   if (!tweetId || !isValidObjectId(tweetId)) {
-    throw new ApiError(200, "could not find tweet or tweet id is not valid");
+    throw new ApiError(200, "Could not find tweet or tweet id is not valid");
   }
 
-  if (!using) {
+  if (!userId || !isValidObjectId(userId)) {
     throw new ApiError(200, "User could not find, user must login");
   }
 
@@ -124,18 +132,40 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
   if (existingTweet) {
     await existingTweet.deleteOne();
 
+    const totalTweetLikes = await Like.countDocuments({ tweet: tweetId });
+
     return res
       .status(200)
-      .json(new ApiResponse(200, "Like added to tweet successfully"));
+      .json(
+        new ApiResponse(
+          200,
+          { totalTweetLikes },
+          "Like removed to tweet successfully"
+        )
+      );
+  } else {
+    await Like.create({ likedBy: userId, tweet: tweetId });
+
+    const totalTweetLikes = await Like.countDocuments({ tweet: tweetId });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { totalTweetLikes },
+          "Like added to tweet successfully"
+        )
+      );
   }
 });
 
 const getLikedVideos = asyncHandler(async (req, res) => {
-  //TODO: get all liked videos
+  //TODO✅: get all liked videos
 
   const { _id } = req.user;
 
-  if (!_id || isValidObjectId(_id)) {
+  if (!_id || !isValidObjectId(_id)) {
     throw new ApiError(404, "User must login");
   }
 
