@@ -33,7 +33,31 @@ const deleteVideo = asyncHandler(async (req, res) => {
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
+  //TODO✅: toggle publish status video
+
   const { videoId } = req.params;
+
+  if (!videoId || !isValidObjectId(videoId)) {
+    throw new ApiError(404, "video id is not found or video id is not valid");
+  }
+
+  const video = await Video.findOne({ _id: videoId });
+
+  if (!video) {
+    throw new ApiError(404, "video is not found");
+  }
+
+  if (video.isPublished) {
+    video.isPublished = false;
+    await video.save({ validateBeforeSave: false });
+  } else {
+    video.isPublished = true;
+    await video.save({ validateBeforeSave: false });
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, video, "toggled the video publish status"));
 });
 
 export {
