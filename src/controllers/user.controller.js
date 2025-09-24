@@ -284,6 +284,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar file is missing");
   }
 
+  const oldUser = await User.findById(req.user?._id);
+  const oldAvatarUrl = oldUser.avatar;
+
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
   if (!avatar.url) {
@@ -300,9 +303,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     { new: true }
   ).select("-password");
 
-  const oldImage = user?.avatar;
-
-  await destroyOnCloudinary(oldImage);
+  if (oldAvatarUrl) {
+    await destroyOnCloudinary(oldAvatarUrl);
+  }
 
   res
     .status(200)
@@ -315,6 +318,9 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   if (!coverImageLocalPath) {
     throw new ApiError(400, "Avatar file is missing");
   }
+
+  const oldUser = await User.findById(req.user?._id);
+  const oldAvatarUrl = oldUser.avatar;
 
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
@@ -332,9 +338,9 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     { new: true }
   ).select("-password");
 
-  const oldImage = user?.coverImage;
-
-  await destroyOnCloudinary(oldImage);
+  if (oldAvatarUrl) {
+    await destroyOnCloudinary(oldAvatarUrl);
+  }
 
   res
     .status(200)
