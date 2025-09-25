@@ -1,6 +1,5 @@
-import mongoose, { isValidObjectId } from "mongoose";
+import { isValidObjectId } from "mongoose";
 import { Video } from "../models/video.model.js";
-import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -10,9 +9,59 @@ import {
 } from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
+  const {
+    page = 1,
+    limit = 10,
+    query,
+    sortBy = "createdAt",
+    sortType = "desc",
+    userId,
+  } = req.query;
 
   //TODO: get all videos based on query, sort, pagination
+
+  if (!userId) {
+    throw new ApiError(400, "Could not found user id");
+  }
+
+  const filters = {
+    owner: userId,
+    isPublished: true,
+  };
+
+  if (query) {
+    filters.$or = [
+      { title: { $regex: query, $options: "i" } },
+      { description: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  const options = {};
+  const sortDirection = sortType === "asc" ? 1 : -1;
+
+  options.sort = { [sortBy]: sortDirection };
+  options.skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+  options.limit = parseInt(limit, 10);
+
+  const totalVideos = await Video.countDocuments(filters);
+
+  const allVideos = await Video.find(filters, null, options);
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        videos: allVideos,
+        pagination: {
+          total: totalVideos,
+          page: parseInt(page, 10),
+          limit: parseInt(limit, 10),
+          totalPages: Math.ceil(totalVideos / parseInt(limit, 10)),
+        },
+      },
+      "Successfully fetched videos by filter"
+    )
+  );
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -86,7 +135,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const { title, description } = req.params;
 
-  //TODO: update video details like title, description, thumbnail
+  //TODO✅: update video details like title, description, thumbnail
 
   if (!videoId || !isValidObjectId(videoId)) {
     throw new ApiError(400, "Video is not found or not valid");
