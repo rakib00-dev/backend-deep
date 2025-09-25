@@ -16,6 +16,10 @@ const uploadOnCloudinary = async (localFilePath) => {
     });
     // file has been uploaded on cloudinary successfully
     console.log("File is uploaded on cloudinary", response.url);
+    console.log(
+      response.duration &&
+        `video file duration on cloudinary ${response.duration}`
+    );
 
     fs.unlinkSync(localFilePath);
     return response;
