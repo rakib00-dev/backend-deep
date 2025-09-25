@@ -18,7 +18,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     userId,
   } = req.query;
 
-  //TODO: get all videos based on query, sort, pagination
+  //TODO✅: get all videos based on query, sort, pagination
 
   if (!userId) {
     throw new ApiError(400, "Could not found user id");
