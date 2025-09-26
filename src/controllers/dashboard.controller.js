@@ -10,6 +10,58 @@ const getChannelStats = asyncHandler(async (req, res) => {
   // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
 
   const { _id: userChannelId } = req.user;
+
+  const vidoes = await Video.find({ owner: userChannelId });
+
+  const videosViews = vidoes
+    .map((e) => e.views)
+    .reduce((acc, curr) => acc + curr, 0);
+
+  const totalChannelSubscribers = await Subscription.countDocuments({
+    channel: userChannelId,
+  });
+
+  const totalVideos = await Video.countDocuments({ owner: userChannelId });
+
+  let totalLikes = await Video.aggregate([
+    {
+      $match: {
+        owner: userChannelId,
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "video",
+        as: "videoLikes",
+      },
+    },
+    {
+      $project: {
+        videoLikes: 1,
+      },
+    },
+  ]);
+
+  totalLikes = totalLikes
+    .map((docs) => docs)
+    .map((e) => e.videoLikes)
+    .map((e) => e.length)
+    .reduce((accu, curr) => accu + curr, 0);
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        totalViews: videosViews,
+        totalSubscribers: totalChannelSubscribers,
+        totalVideos: totalVideos,
+        totalLikes: totalLikes,
+      },
+      "successfully get the details total likes, total subs, total videos, total views"
+    )
+  );
 });
 
 const getChannelVideos = asyncHandler(async (req, res) => {
